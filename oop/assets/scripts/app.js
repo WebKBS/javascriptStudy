@@ -13,6 +13,15 @@ class DOMHelper {
 }
 
 class Tooltip {
+  constructor(closeNotifierFunction) {
+    this.closeNotifier = closeNotifierFunction;
+  }
+
+  closeTooltip = () => {
+    this.detach();
+    this.closeNotifier();
+  };
+
   detach = () => {
     // bind this 대신
     this.element.remove();
@@ -25,7 +34,7 @@ class Tooltip {
     tooltipElement.className = "card";
     tooltipElement.textContent = "dummy";
 
-    tooltipElement.addEventListener("click", this.detach);
+    tooltipElement.addEventListener("click", this.closeTooltip);
     this.element = tooltipElement;
     document.body.append(tooltipElement);
   }
@@ -46,7 +55,10 @@ class ProjectItem {
       return;
     }
 
-    const tooltip = new Tooltip();
+    const tooltip = new Tooltip(() => {
+      this.hasActiveTooltip = false;
+    });
+
     tooltip.atttach();
     this.hasActiveTooltip = true;
   }
